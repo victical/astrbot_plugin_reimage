@@ -114,6 +114,16 @@ class ImageRecognitionPlugin(Star):
 
     @llm_tool(name="image-analysis")
     async def analyze_image(self, event: AstrMessageEvent, message: str = "") -> str:
+        """
+        【已修正】分析图片内容。当用户发送包含图片的消息时，调用此函数。
+        函数会自动识别消息中的图片，并生成图片描述。
+
+        Args:
+            message (string): 用户的消息内容
+
+        Returns:
+            string: 生成的图片描述或错误信息
+        """
         image_url = self.get_image_from_message(event.message_obj.message)
         if not image_url:
             return "未检测到图片，请发送包含图片的消息"
