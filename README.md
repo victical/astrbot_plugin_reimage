@@ -27,3 +27,7 @@ git clone https://github.com/victical/astrbot_plugin_reimage
 
 ## 📝 许可证
 MIT License
+
+## 提示
+ AstrBotv3.5.18存在一个 Bug:框架会忽略插件指定的 rovider而使用默认 Provider。导致这个插件失效，这个版本直接向provider的api发送请求绕过这个bug。
+ 相关 Bug :https://github.com/AstrBotDevs/AstrBot/issues/2048
