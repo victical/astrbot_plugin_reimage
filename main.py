@@ -3,6 +3,7 @@ from astrbot.api.star import Context, Star, register
 from astrbot.api import logger, llm_tool
 import os
 import json
+import base64
 import httpx
 import re
 import asyncio
@@ -59,9 +60,20 @@ class ImageRecognitionPlugin(Star):
         if not img_provider:
             raise Exception(f"未找到图像识别provider，请在配置中设置id为'{self.provider_id}'的图像模型")
 
-        # 处理图片URL
+        # 处理图片URL：本地文件路径转为 base64 数据
+        if image_url.startswith("file://"):
+            image_url = image_url[7:]
         if not self.is_valid_url(image_url):
-            raise Exception(f"无效的图片URL: {image_url}")
+            if os.path.exists(image_url):
+                with open(image_url, "rb") as f:
+                    img_b64 = base64.b64encode(f.read()).decode()
+                ext = os.path.splitext(image_url)[1].lstrip(".").lower() or "png"
+                if ext == "jpg":
+                    ext = "jpeg"
+                image_url = f"data:image/{ext};base64,{img_b64}"
+                logger.info(f"图片为本地文件，已转为 base64 编码: {image_url[:64]}...")
+            else:
+                raise Exception(f"无效的图片URL: {image_url}")
 
         try:
             # 构建图像识别请求
